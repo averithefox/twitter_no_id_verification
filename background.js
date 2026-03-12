@@ -59,11 +59,27 @@ function patch({ requestId }) {
   };
 }
 
-browser.webRequest.onBeforeRequest.addListener(
-  patch,
+function isHtmlResponse(responseHeaders = []) {
+  return responseHeaders.some((header) => {
+    if (!header?.name) return false;
+    if (header.name.toLowerCase() !== "content-type") return false;
+
+    const value = (header.value || "").toLowerCase();
+    return value.includes("text/html") || value.includes("application/xhtml+xml");
+  });
+}
+
+function maybePatch(details) {
+  if (isHtmlResponse(details.responseHeaders)) {
+    patch(details);
+  }
+}
+
+browser.webRequest.onHeadersReceived.addListener(
+  maybePatch,
   {
     urls: ["*://x.com/*"],
-    types: ["xmlhttprequest", "main_frame", "sub_frame"],
+    types: ["main_frame", "sub_frame"],
   },
-  ["blocking"],
+  ["blocking", "responseHeaders"],
 );
