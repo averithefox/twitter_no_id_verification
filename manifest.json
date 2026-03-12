@@ -3,7 +3,15 @@
   "name": "rweb_age_assurance_flow_enabled",
   "version": "0.0.1",
 
-  "permissions": ["webRequest", "webRequestBlocking", "*://x.com/*"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "rweb_age_assurance_flow_enabled@averi.me",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
 
+  "permissions": ["webRequest", "webRequestBlocking", "*://x.com/*"],
   "background": { "scripts": ["background.js"] }
 }
